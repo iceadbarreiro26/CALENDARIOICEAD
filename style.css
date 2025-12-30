@@ -255,3 +255,27 @@ h1{
     margin:0;
   }
 }
+
+/* 🔥 CORREÇÃO FORÇADA — NÃO IGNORE */
+.calendar {
+  display: grid !important;
+  grid-template-columns: repeat(7, 1fr) !important;
+  min-height: 300px;
+}
+
+.calendar .day {
+  display: flex !important;
+  flex-direction: column;
+  min-height: 80px !important;
+  background: #ffffff !important;
+  color: #000000 !important;
+  border: 1px solid #ddd;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.calendar .day strong {
+  font-size: 14px !important;
+  color: #000 !important;
+}
+
