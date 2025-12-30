@@ -8,7 +8,10 @@ body.dark{
   background:#121212;
   color:#fff;
 }
-body.dark .day{ background:#1e1e1e; box-shadow:none; }
+body.dark .day{
+  background:#1e1e1e;
+  box-shadow:none;
+}
 body.dark .event{ opacity:0.95; }
 body.dark #modal{ background:#1f1f1f; color:#fff; }
 body.dark input,
@@ -18,7 +21,10 @@ body.dark textarea{
   color:#fff;
   border:1px solid #555;
 }
-body.dark .btn-secondary{ background:#444; color:#fff; }
+body.dark .btn-secondary{
+  background:#444;
+  color:#fff;
+}
 
 /* NORMAL */
 body{
@@ -33,6 +39,7 @@ h1{
   margin-bottom:8px;
 }
 
+/* Botões do topo */
 #topButtons{
   position:absolute;
   top:15px;
@@ -51,6 +58,7 @@ h1{
   cursor:pointer;
 }
 
+/* Navegação */
 .nav{
   display:flex;
   justify-content:center;
@@ -66,6 +74,7 @@ h1{
   cursor:pointer;
 }
 
+/* Exportação */
 .export-buttons{
   display:flex;
   justify-content:center;
@@ -81,6 +90,15 @@ h1{
   color:#fff;
 }
 
+/* 📅 CONTAINER */
+.calendar-container{
+  width:100%;
+  max-width:420px;
+  margin:0 auto;
+  padding:10px;
+}
+
+/* Dias da semana */
 #weekdays{
   display:grid;
   grid-template-columns:repeat(7,1fr);
@@ -88,45 +106,43 @@ h1{
   font-weight:700;
   margin-bottom:6px;
 }
-
-.calendar {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 4px;
+#weekdays div{
+  font-size:14px;
 }
 
-@media (max-width: 480px) {
-  .calendar {
-    gap: 2px;
-  }
-
-  .calendar div {
-    font-size: 12px;
-    padding: 6px;
-  }
+/* Calendário */
+.calendar{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:6px;
 }
 
-
+/* Dia */
 .day{
   background:#fff;
-  padding:8px;
+  padding:6px;
   border-radius:8px;
-  min-height:90px;
+  min-height:90px; /* ESSENCIAL */
   box-shadow:0 1px 3px rgba(0,0,0,0.06);
   position:relative;
+  display:flex;
+  flex-direction:column;
 }
 
+/* Número do dia */
 .day strong{
   display:block;
-  margin-bottom:6px;
+  margin-bottom:4px;
+  font-size:14px;
 }
 
+/* Evento */
 .event{
   display:block;
   padding:4px 6px;
   border-radius:6px;
   margin-top:6px;
-  font-size:13px;
+  font-size:12px;
   color:#fff;
   background:#0055aa;
   position:relative;
@@ -136,6 +152,7 @@ h1{
 
 .event.no-culto{ background:#b30000; }
 
+/* Ações do evento */
 .event .actions{
   position:absolute;
   right:6px;
@@ -152,7 +169,43 @@ h1{
   font-size:12px;
 }
 
-/* Modal */
+/* 🎨 Tipos de evento */
+.event.Culto{ background:#2196F3; }
+.event.EBD{ background:#4CAF50; }
+.event.Vigília{ background:#9C27B0; }
+.event.Ensaio{ background:#E91E63; }
+.event.Especial{ background:#6f1d36; }
+.event.Não_teremos_culto{ background:#b30000; }
+
+/* 📱 CELULAR */
+@media (max-width:480px){
+  body{
+    margin:12px;
+  }
+
+  #weekdays div{
+    font-size:12px;
+  }
+
+  .calendar{
+    gap:4px;
+  }
+
+  .day{
+    min-height:70px;
+    padding:5px;
+  }
+
+  .day strong{
+    font-size:12px;
+  }
+
+  .event{
+    font-size:11px;
+  }
+}
+
+/* 🪟 MODAL */
 #modalOverlay{
   display:none;
   position:fixed;
@@ -168,6 +221,7 @@ h1{
   padding:18px;
   border-radius:10px;
   width:360px;
+  max-width:90%;
   box-shadow:0 8px 24px rgba(0,0,0,0.2);
 }
 
@@ -189,13 +243,7 @@ h1{
 .btn-danger{ background:var(--danger); color:#fff; }
 .btn-secondary{ background:#e6e6e6; }
 
-.event.Culto{ background:#2196F3; }
-.event.EBD{ background:#4CAF50; }
-.event.Vigília{ background:#9C27B0; }
-.event.Ensaio{ background:#E91E63; }
-.event.Especial{ background:#6f1d36; }
-.event.Não_teremos_culto{ background:#b30000; }
-
+/* 🖨️ PRINT */
 @media print{
   #topButtons,
   .nav,
@@ -203,13 +251,7 @@ h1{
   #modalOverlay{
     display:none !important;
   }
-  body{ margin:0; }
-
-}
-
-.calendar-container {
-  width: 100%;
-  max-width: 420px; /* tamanho ideal pra celular */
-  margin: 0 auto;   /* centraliza */
-  padding: 10px;
+  body{
+    margin:0;
+  }
 }
