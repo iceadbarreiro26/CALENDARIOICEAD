@@ -89,11 +89,23 @@ h1{
   margin-bottom:6px;
 }
 
-#calendar{
-  display:grid;
-  grid-template-columns:repeat(7,1fr);
-  gap:8px;
+.calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
 }
+
+@media (max-width: 480px) {
+  .calendar {
+    gap: 2px;
+  }
+
+  .calendar div {
+    font-size: 12px;
+    padding: 6px;
+  }
+}
+
 
 .day{
   background:#fff;
@@ -192,4 +204,12 @@ h1{
     display:none !important;
   }
   body{ margin:0; }
+
+}
+
+.calendar-container {
+  width: 100%;
+  max-width: 420px; /* tamanho ideal pra celular */
+  margin: 0 auto;   /* centraliza */
+  padding: 10px;
 }
