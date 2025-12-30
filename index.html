@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Calendário ICEAD</title>
+
+  <!-- Biblioteca PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <!-- CSS externo -->
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+<div id="topButtons">
+  <button id="toggleDark">🌙 Modo Escuro</button>
+  <button id="btnLogin">Entrar</button>
+</div>
+
+<header>
+  <img src="D:\calendário icead\logo.png" width="250" height="150">
+</header>
+
+<h1>Calendário ICEAD - <span id="monthTitle"></span></h1>
+
+<div class="nav">
+  <button id="prev">◀️ Mês anterior</button>
+  <button id="next">Próximo mês ▶️</button>
+</div>
+
+<div class="export-buttons edit-only" style="display:none;">
+  <button onclick="exportarPDF()">Exportar PDF</button>
+  <button onclick="exportarExcel()">Exportar Excel</button>
+  <button onclick="window.print()">Imprimir</button>
+</div>
+
+<div id="weekdays">
+  <div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div>
+</div>
+
+<div id="calendar"></div>
+
+<!-- Modal -->
+<div id="modalOverlay">
+  <div id="modal">
+    <h3 id="modalTitle">Editar / Adicionar Evento</h3>
+
+    <label>Data</label>
+    <input id="modalDate" type="date" />
+
+    <label>Tipo</label>
+    <select id="modalType">
+      <option value="Culto">Culto</option>
+      <option value="EBD">EBD</option>
+      <option value="Vigília">Vigília</option>
+      <option value="Ensaio">Ensaio</option>
+      <option value="Especial">Especial</option>
+      <option value="Não teremos culto">Não teremos culto</option>
+    </select>
+
+    <label>Horário</label>
+    <input id="modalHorario" type="time" />
+
+    <label>Abertura</label>
+    <input id="modalAbertura" type="text" placeholder="Nome/Responsável" />
+
+    <label>Direção do Louvor</label>
+    <input id="modalLouvor" type="text" placeholder="Responsável" />
+
+    <label>Palavra</label>
+    <input id="modalPalavra" type="text" placeholder="Quem ministra" />
+
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="modalCancel">Cancelar</button>
+      <button class="btn btn-danger" id="modalDelete" style="display:none">Excluir</button>
+      <button class="btn btn-primary" id="save-event">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- JS externo -->
+<script src="script.js"></script>
+</body>
+</html>
