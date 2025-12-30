@@ -7,60 +7,42 @@
   <title>Calendário ICEAD 2026 - ICEAD</title>
   <meta name="description" content="Calendário completo da ICEAD 2026 com todos os meses, eventos e datas importantes.">
   <meta name="keywords" content="Calendário, ICEAD, 2026, datas, igreja">
-
+  <!-- Biblioteca PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <!-- CSS externo -->
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-
-<!-- Botões superiores -->
 <div id="topButtons">
   <button id="toggleDark">🌙 Modo Escuro</button>
   <button id="btnLogin">Entrar</button>
 </div>
 
-<!-- Cabeçalho -->
 <header>
-  <img src="img/logo.png" alt="Logo ICEAD" width="250" height="150">
+ <img src="img/logo.png" alt="Logo" width="250" height="150">
 </header>
 
-<!-- Título -->
 <h1>Calendário ICEAD - <span id="monthTitle"></span></h1>
 
-<!-- Navegação -->
 <div class="nav">
   <button id="prev">◀️ Mês anterior</button>
   <button id="next">Próximo mês ▶️</button>
 </div>
 
-<!-- Botões de exportação -->
 <div class="export-buttons edit-only" style="display:none;">
   <button onclick="exportarPDF()">Exportar PDF</button>
   <button onclick="exportarExcel()">Exportar Excel</button>
   <button onclick="window.print()">Imprimir</button>
 </div>
 
-<!-- CONTAINER DO CALENDÁRIO -->
-<div class="calendar-container">
-
-  <!-- Dias da semana -->
-  <div id="weekdays">
-    <div>Dom</div>
-    <div>Seg</div>
-    <div>Ter</div>
-    <div>Qua</div>
-    <div>Qui</div>
-    <div>Sex</div>
-    <div>Sáb</div>
-  </div>
-
-  <!-- Calendário (preenchido pelo JS) -->
- <div id="calendar" class="calendar"></div>
-
-
+<div id="weekdays">
+  <div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div>
 </div>
 
-<!-- MODAL -->
+<div id="calendar"></div>
+
+<!-- Modal -->
 <div id="modalOverlay">
   <div id="modal">
     <h3 id="modalTitle">Editar / Adicionar Evento</h3>
@@ -98,9 +80,8 @@
   </div>
 </div>
 
-<!-- JS -->
+<!-- JS externo -->
 <script src="script.js"></script>
-
 </body>
 </html>
 
