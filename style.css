@@ -183,6 +183,7 @@ h1{
 .event.Ensaio{ background:#E91E63; }
 .event.Especial{ background:#6f1d36; }
 .event.Não_teremos_culto{ background:#b30000; }
+.event.Congregação{ background:brown; }
 
 @media print{
   #topButtons,
@@ -269,3 +270,4 @@ h1{
     max-width:400px;
   }
 }
+
