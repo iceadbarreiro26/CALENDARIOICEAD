@@ -1,4 +1,3 @@
-
 let now = new Date();
 let currentYear = now.getFullYear();
 let currentMonth = now.getMonth();
@@ -77,19 +76,20 @@ function renderCalendar(){
 
       const det = ev.details || {};
 
-      const title = document.createElement('span');
-      title.textContent = ev.type;
-
-      const txt = document.createElement('span');
-      txt.style.marginLeft = '8px';
-      txt.textContent =
-        `(${det.horario || '-'} - ${det.abertura || '-'} - ${det.louvor || '-'} - ${det.palavra || '-'})`;
-
-      evDiv.appendChild(title);
-      evDiv.appendChild(txt);
+      evDiv.textContent = `${ev.type} • ${det.horario || '--:--'}`;
 
       evDiv.title =
-        `${ev.type}\nHorário: ${det.horario || '-'}\nAbertura: ${det.abertura || '-'}\nDireção do Louvor: ${det.louvor || '-'}\nPalavra: ${det.palavra || '-'}`;
+        `${ev.type}\nHorário: ${det.horario || '-'}\nAbertura: ${det.abertura || '-'}\nLouvor: ${det.louvor || '-'}\nPalavra: ${det.palavra || '-'}`;
+
+      /* clique no evento */
+      evDiv.onclick = (e) => {
+        e.stopPropagation();
+        if(isLoggedIn){
+          openModalForEdit(iso, idx, ev);
+        } else {
+          openModalForView(ev);
+        }
+      };
 
       if(isLoggedIn){
         const actions = document.createElement('div');
@@ -114,11 +114,6 @@ function renderCalendar(){
         actions.appendChild(editBtn);
         actions.appendChild(delBtn);
         evDiv.appendChild(actions);
-
-        evDiv.onclick = (e) => {
-          e.stopPropagation();
-          openModalForEdit(iso, idx, ev);
-        };
       }
 
       div.appendChild(evDiv);
@@ -142,6 +137,7 @@ function openModalForAdd(iso){
   document.getElementById('modalLouvor').value = '';
   document.getElementById('modalPalavra').value = '';
   document.getElementById('modalDelete').style.display = 'none';
+  document.getElementById('save-event').style.display = 'inline-block';
   document.getElementById('modalOverlay').style.display = 'flex';
 }
 
@@ -154,16 +150,33 @@ function openModalForEdit(iso, idx, ev){
   document.getElementById('modalLouvor').value = ev.details?.louvor || '';
   document.getElementById('modalPalavra').value = ev.details?.palavra || '';
   document.getElementById('modalDelete').style.display = 'inline-block';
+  document.getElementById('save-event').style.display = 'inline-block';
+  document.getElementById('modalOverlay').style.display = 'flex';
+}
+
+/* visualização (modo celular) */
+function openModalForView(ev){
+  document.getElementById('modalDate').value = '';
+  document.getElementById('modalType').value = ev.type;
+  document.getElementById('modalHorario').value = ev.details?.horario || '';
+  document.getElementById('modalAbertura').value = ev.details?.abertura || '';
+  document.getElementById('modalLouvor').value = ev.details?.louvor || '';
+  document.getElementById('modalPalavra').value = ev.details?.palavra || '';
+
+  document.getElementById('modalDelete').style.display = 'none';
+  document.getElementById('save-event').style.display = 'none';
+
   document.getElementById('modalOverlay').style.display = 'flex';
 }
 
 function closeModal(){
   document.getElementById('modalOverlay').style.display = 'none';
+  document.getElementById('save-event').style.display = 'inline-block';
 }
 
 document.getElementById('modalCancel').addEventListener('click', closeModal);
 
-/* salvar evento */
+/* salvar */
 document.getElementById('save-event').addEventListener('click', () => {
   const iso = document.getElementById('modalDate').value;
   const type = document.getElementById('modalType').value;
@@ -188,7 +201,7 @@ document.getElementById('save-event').addEventListener('click', () => {
   renderCalendar();
 });
 
-/* excluir via modal */
+/* excluir */
 document.getElementById('modalDelete').addEventListener('click', () => {
   if(!editing) return;
   const { iso, idx } = editing;
@@ -203,7 +216,6 @@ document.getElementById('modalDelete').addEventListener('click', () => {
   renderCalendar();
 });
 
-/* excluir via ícone */
 function confirmDelete(iso, idx){
   if(!confirm('Tem certeza que deseja excluir este evento?')) return;
 
@@ -215,7 +227,7 @@ function confirmDelete(iso, idx){
   renderCalendar();
 }
 
-/* navegação de meses */
+/* navegação */
 document.getElementById('prev').addEventListener('click', () => {
   currentMonth--;
   if(currentMonth < 0){
@@ -255,78 +267,6 @@ document.getElementById('btnLogin').addEventListener('click', () => {
     alert("Usuário ou senha incorretos!");
   }
 });
-
-/* exportações */
-function getEventosCorretos(){
-  const all = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-  let lista = [];
-
-  Object.keys(all).forEach(data => {
-    all[data].forEach(ev => {
-      lista.push({
-        data,
-        type: ev.type,
-        details: ev.details || {}
-      });
-    });
-  });
-
-  return lista;
-}
-
-function exportarPDF(){
-  const eventos = getEventosCorretos();
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ unit:'pt', format:'a4' });
-
-  doc.setFontSize(14);
-  doc.text("CALENDÁRIO DE EVENTOS - ICEAD", 40, 40);
-
-  let y = 70;
-
-  if(eventos.length === 0){
-    doc.setFontSize(12);
-    doc.text("Nenhum evento encontrado.", 40, y);
-  } else {
-    eventos.forEach(ev => {
-      const linha1 = `Data: ${ev.data}  |  Tipo: ${ev.type}`;
-      const linha2 =
-        `Horário: ${ev.details.horario || '-'}  |  Abertura: ${ev.details.abertura || '-'}  |  Louvor: ${ev.details.louvor || '-'}  |  Palavra: ${ev.details.palavra || '-'}`;
-
-      doc.text(linha1, 40, y);
-      y += 16;
-      doc.text(linha2, 40, y);
-      y += 24;
-
-      if(y > 750){
-        doc.addPage();
-        y = 40;
-      }
-    });
-  }
-
-  doc.save('calendario_icead.pdf');
-}
-
-function exportarExcel(){
-  const eventos = getEventosCorretos();
-  if(eventos.length === 0){
-    alert("Nenhum evento para exportar");
-    return;
-  }
-
-  let csv = "Data,Tipo,Horário,Abertura,Louvor,Palavra\n";
-
-  eventos.forEach(ev => {
-    csv += `"${ev.data}","${ev.type}","${ev.details.horario || ''}","${ev.details.abertura || ''}","${ev.details.louvor || ''}","${ev.details.palavra || ''}"\n`;
-  });
-
-  const blob = new Blob([csv], { type:'text/csv' });
-  const link = document.createElement('a');
-  link.href = URL.createObjectURL(blob);
-  link.download = 'calendario_icead.csv';
-  link.click();
-}
 
 /* inicializa */
 renderCalendar();
