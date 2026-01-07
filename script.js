@@ -7,8 +7,8 @@
   const firebaseConfig = {
     apiKey: "AIzaSyDeilE0hgCa2PBVUpoewLjD_N0sR9fsyPE",
     authDomain: "calendarioicead.firebaseapp.com",
-    databaseURL: "calendarioicead",
-    projectId: "750532290008",
+    databaseURL: "https://calendarioicead-default-rtdb.firebaseio.com",
+    projectId: "calendarioicead",
     storageBucket: "calendarioicead.firebasestorage.app"
     messagingSenderId:"750532290008",
     appId: "1:750532290008:web:70c95bd9a75a6580e27ead"
@@ -228,4 +228,5 @@ document.getElementById('btnLogin').onclick=()=>{
 
 // ---------- INICIAR ----------
 loadEvents();
+
 
