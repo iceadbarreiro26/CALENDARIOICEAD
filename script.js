@@ -8,7 +8,7 @@
     apiKey: "AIzaSyDeilE0hgCa2PBVUpoewLjD_N0sR9fsyPE",
     authDomain: "calendarioicead.firebaseapp.com",
     databaseURL: "calendarioicead",
-    projectId: "calendarioicead.firebasestorage.app"",
+    projectId: "750532290008",
     storageBucket: "calendarioicead.firebasestorage.app"
     messagingSenderId:"750532290008",
     appId: "1:750532290008:web:70c95bd9a75a6580e27ead"
@@ -228,3 +228,4 @@ document.getElementById('btnLogin').onclick=()=>{
 
 // ---------- INICIAR ----------
 loadEvents();
+
