@@ -1,38 +1,39 @@
-/* ================= CONFIG INICIAL ================= */
+/* ================= CONFIG ================= */
+const STORAGE_KEY = 'calendario_icead_events';
+
 let now = new Date();
 let currentYear = now.getFullYear();
 let currentMonth = now.getMonth();
 let editing = null;
 let isLoggedIn = false;
 
-const STORAGE_KEY = 'calendario_icead_events';
 let events = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
 
 function saveStorage(){
   localStorage.setItem(STORAGE_KEY, JSON.stringify(events));
 }
 
-/* ================= CONTROLE DE EDIÇÃO ================= */
-function setModalReadOnly(isReadOnly){
+/* ================= READ ONLY ================= */
+function setModalReadOnly(state){
   ['modalType','modalHorario','modalAbertura','modalLouvor','modalPalavra']
     .forEach(id => {
       const el = document.getElementById(id);
-      if(el) el.disabled = isReadOnly;
+      if(el) el.disabled = state;
     });
 }
 
 /* ================= EVENTOS FIXOS ================= */
 function ensureFixedEvents(year, month, container){
-  const totalDays = new Date(year, month + 1, 0).getDate();
+  const days = new Date(year, month + 1, 0).getDate();
 
-  for(let d = 1; d <= totalDays; d++){
+  for(let d = 1; d <= days; d++){
     const date = new Date(year, month, d);
     const iso = date.toISOString().slice(0,10);
     if(!container[iso]) container[iso] = [];
 
     const hasNoCulto = container[iso].some(e => e.type === 'Não teremos culto');
 
-    if(date.getDay() === 0){ // Domingo
+    if(date.getDay() === 0){
       if(!container[iso].some(e => e.type === 'EBD'))
         container[iso].push({ type:'EBD', details:{}, _auto:true });
 
@@ -40,22 +41,22 @@ function ensureFixedEvents(year, month, container){
         container[iso].push({ type:'Culto', details:{}, _auto:true });
     }
 
-    if(date.getDay() === 3){ // Quarta
+    if(date.getDay() === 3){
       if(!hasNoCulto && !container[iso].some(e => e.type === 'Culto'))
         container[iso].push({ type:'Culto', details:{}, _auto:true });
     }
   }
 }
 
-/* ================= RENDER CALENDÁRIO ================= */
+/* ================= RENDER ================= */
 function renderCalendar(){
-  const monthNames = [
+  const months = [
     'Janeiro','Fevereiro','Março','Abril','Maio','Junho',
     'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'
   ];
 
   document.getElementById('monthTitle').textContent =
-    `${monthNames[currentMonth]} / ${currentYear}`;
+    `${months[currentMonth]} / ${currentYear}`;
 
   const viewEvents = JSON.parse(JSON.stringify(events));
   ensureFixedEvents(currentYear, currentMonth, viewEvents);
@@ -66,13 +67,13 @@ function renderCalendar(){
   const firstDay = new Date(currentYear, currentMonth, 1).getDay();
   const total = new Date(currentYear, currentMonth + 1, 0).getDate();
 
-  for(let i = 0; i < firstDay; i++){
+  for(let i=0;i<firstDay;i++){
     calendar.appendChild(document.createElement('div')).className = 'day';
   }
 
-  for(let d = 1; d <= total; d++){
-    const dateObj = new Date(currentYear, currentMonth, d);
-    const iso = dateObj.toISOString().slice(0,10);
+  for(let d=1; d<=total; d++){
+    const date = new Date(currentYear, currentMonth, d);
+    const iso = date.toISOString().slice(0,10);
 
     const day = document.createElement('div');
     day.className = 'day';
@@ -80,12 +81,11 @@ function renderCalendar(){
 
     (viewEvents[iso] || []).forEach((ev, idx) => {
       const evDiv = document.createElement('div');
-      evDiv.className = 'event ' + (ev.type || 'Outro').replace(/\s+/g,'_');
+      evDiv.className = 'event ' + ev.type.replace(/\s+/g,'_');
 
-      const det = ev.details || {};
-      evDiv.textContent = `${ev.type} • ${det.horario || '--:--'}`;
+      evDiv.textContent = `${ev.type} • ${ev.details?.horario || '--:--'}`;
 
-      evDiv.onclick = (e) => {
+      evDiv.onclick = e => {
         e.stopPropagation();
         isLoggedIn
           ? openModalForEdit(iso, idx, ev)
@@ -123,9 +123,10 @@ function openModalForAdd(iso){
 
   document.getElementById('modalDate').value = iso;
   document.getElementById('modalType').value = 'Culto';
-  ['Horario','Abertura','Louvor','Palavra'].forEach(f =>
-    document.getElementById('modal'+f).value = ''
-  );
+  document.getElementById('modalHorario').value = '';
+  document.getElementById('modalAbertura').value = '';
+  document.getElementById('modalLouvor').value = '';
+  document.getElementById('modalPalavra').value = '';
 
   document.getElementById('modalDelete').style.display = 'none';
   document.getElementById('save-event').style.display = 'inline-block';
@@ -168,20 +169,21 @@ function closeModal(){
 
 /* ================= AÇÕES ================= */
 document.getElementById('save-event').onclick = () => {
-  const iso = modalDate.value;
+  const iso = document.getElementById('modalDate').value;
   if(!events[iso]) events[iso] = [];
 
   const ev = {
-    type: modalType.value,
+    type: document.getElementById('modalType').value,
     details:{
-      horario: modalHorario.value.trim(),
-      abertura: modalAbertura.value.trim(),
-      louvor: modalLouvor.value.trim(),
-      palavra: modalPalavra.value.trim()
+      horario: document.getElementById('modalHorario').value.trim(),
+      abertura: document.getElementById('modalAbertura').value.trim(),
+      louvor: document.getElementById('modalLouvor').value.trim(),
+      palavra: document.getElementById('modalPalavra').value.trim()
     }
   };
 
   editing ? events[iso][editing.idx] = ev : events[iso].push(ev);
+
   saveStorage();
   closeModal();
   renderCalendar();
@@ -208,27 +210,27 @@ function confirmDelete(iso, idx){
   }
 }
 
-/* ================= NAVEGAÇÃO ================= */
-prev.onclick = () => {
+/* ================= NAV ================= */
+document.getElementById('prev').onclick = () => {
   currentMonth--;
   if(currentMonth < 0){ currentMonth = 11; currentYear--; }
   renderCalendar();
 };
 
-next.onclick = () => {
+document.getElementById('next').onclick = () => {
   currentMonth++;
   if(currentMonth > 11){ currentMonth = 0; currentYear++; }
   renderCalendar();
 };
 
 /* ================= LOGIN ================= */
-btnLogin.onclick = () => {
+document.getElementById('btnLogin').onclick = () => {
   if(prompt('Usuário:') === 'admin' && prompt('Senha:') === '1234'){
     isLoggedIn = true;
-    btnLogin.style.display = 'none';
+    document.getElementById('btnLogin').style.display = 'none';
     renderCalendar();
   } else alert('Login inválido');
 };
 
-/* ================= INICIAR ================= */
+/* ================= START ================= */
 renderCalendar();
