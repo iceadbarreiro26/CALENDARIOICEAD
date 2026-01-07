@@ -12,23 +12,27 @@
   <link rel="stylesheet" href="style.css">
 
   <!-- FIREBASE -->
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getDatabase } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-  <script>
-    // --------- CONFIGURAÇÃO DO FIREBASE ----------
+    // Configuração do Firebase do seu projeto
     const firebaseConfig = {
-      apiKey: "SUA_API_KEY",
-      authDomain: "SEU_DOMINIO.firebaseapp.com",
-      databaseURL: "https://SEU_PROJECT_ID-default-rtdb.firebaseio.com",
-      projectId: "SEU_PROJECT_ID",
-      storageBucket: "SEU_BUCKET.appspot.com",
-      messagingSenderId: "SEU_ID",
-      appId: "SEU_APP_ID"
+      apiKey: "AIzaSyDeilE0hgCa2PBVUpoewLjD_N0sR9fsyPE",
+      authDomain: "calendarioicead.firebaseapp.com",
+      databaseURL: "https://calendarioicead-default-rtdb.firebaseio.com",
+      projectId: "calendarioicead",
+      storageBucket: "calendarioicead.appspot.com",
+      messagingSenderId: "750532290008",
+      appId: "1:750532290008:web:70c95bd9a75a6580e27ead"
     };
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+    // Inicializa Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // Expondo db para o script.js
+    window.firebaseDB = db;
   </script>
 </head>
 
@@ -101,6 +105,6 @@
 </div>
 
 <!-- JS externo -->
-<script src="script.js"></script>
+<script type="module" src="script.js"></script>
 </body>
 </html>
