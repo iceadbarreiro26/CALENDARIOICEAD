@@ -1,33 +1,31 @@
 // ---------------------- FIREBASE ----------------------
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+import { initializeApp } from "firebase/app";
+import { getDatabase, ref, get, set } from "firebase/database";
 
-<script>
-  // Cole aqui sua configuração do Firebase Web
-  const firebaseConfig = {
-    apiKey: "AIzaSyDeilE0hgCa2PBVUpoewLjD_N0sR9fsyPE",
-    authDomain: "calendarioicead.firebaseapp.com",
-    databaseURL: "https://calendarioicead-default-rtdb.firebaseio.com",
-    projectId: "calendarioicead",
-    storageBucket: "calendarioicead.firebasestorage.app"
-    messagingSenderId:"750532290008",
-    appId: "1:750532290008:web:70c95bd9a75a6580e27ead"
-  };
+// Configuração do seu Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyDeilE0hgCa2PBVUpoewLjD_N0sR9fsyPE",
+  authDomain: "calendarioicead.firebaseapp.com",
+  databaseURL: "https://calendarioicead-default-rtdb.firebaseio.com",
+  projectId: "calendarioicead",
+  storageBucket: "calendarioicead.appspot.com",
+  messagingSenderId: "750532290008",
+  appId: "1:750532290008:web:70c95bd9a75a6580e27ead"
+};
 
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
-</script>
+// Inicializa Firebase
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
-// ---------------------- CALENDÁRIO ----------------------
+// ---------------------- VARIÁVEIS ----------------------
 let now = new Date();
 let currentYear = now.getFullYear();
 let currentMonth = now.getMonth();
 let editing = null;
 let isLoggedIn = false;
+let events = {}; // carregado do Firebase
 
-let events = {}; // será carregado do Firebase
-
-// 🔒 controla edição do modal
+// ---------------------- FUNÇÕES AUXILIARES ----------------------
 function setModalReadOnly(isReadOnly){
   const fields = ['modalType','modalHorario','modalAbertura','modalLouvor','modalPalavra'];
   fields.forEach(id => {
@@ -36,18 +34,19 @@ function setModalReadOnly(isReadOnly){
   });
 }
 
-// ---------- FIREBASE FUNÇÕES ----------
+// Carregar eventos do Firebase
 async function loadEvents() {
-  const snapshot = await db.ref('/events').get();
+  const snapshot = await get(ref(db, '/events'));
   events = snapshot.val() || {};
   renderCalendar();
 }
 
+// Salvar um dia específico no Firebase
 async function saveDay(iso) {
-  await db.ref('/events/' + iso).set(events[iso] || []);
+  await set(ref(db, '/events/' + iso), events[iso] || []);
 }
 
-// ---------- render ----------
+// ---------------------- RENDER CALENDÁRIO ----------------------
 function renderCalendar(){
   const monthNames = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
   document.getElementById('monthTitle').textContent = monthNames[currentMonth] + ' / ' + currentYear;
@@ -121,7 +120,7 @@ function renderCalendar(){
   }
 }
 
-// ---------- modal ----------
+// ---------------------- MODAL ----------------------
 function openModalForAdd(iso){
   editing=null;
   setModalReadOnly(false);
@@ -166,7 +165,7 @@ function openModalForView(ev){
 function closeModal(){ document.getElementById('modalOverlay').style.display='none'; setModalReadOnly(false); document.getElementById('save-event').style.display='inline-block'; }
 document.getElementById('modalCancel').addEventListener('click',closeModal);
 
-// ---------- SALVAR ----------
+// ---------------------- SALVAR ----------------------
 document.getElementById('save-event').addEventListener('click', async ()=>{
   const iso = document.getElementById('modalDate').value;
   if(!events[iso]) events[iso]=[];
@@ -188,7 +187,7 @@ document.getElementById('save-event').addEventListener('click', async ()=>{
   renderCalendar();
 });
 
-// ---------- EXCLUIR ----------
+// ---------------------- EXCLUIR ----------------------
 document.getElementById('modalDelete').addEventListener('click', async ()=>{
   if(!editing) return;
   const {iso,idx}=editing;
@@ -206,14 +205,14 @@ function confirmDelete(iso,idx){
   saveDay(iso).then(()=>renderCalendar());
 }
 
-// ---------- NAVEGAÇÃO ----------
+// ---------------------- NAVEGAÇÃO ----------------------
 document.getElementById('prev').onclick=()=>{ currentMonth--; if(currentMonth<0){currentMonth=11; currentYear--;} renderCalendar(); };
 document.getElementById('next').onclick=()=>{ currentMonth++; if(currentMonth>11){currentMonth=0; currentYear++;} renderCalendar(); };
 
-// ---------- DARK MODE ----------
+// ---------------------- DARK MODE ----------------------
 document.getElementById('toggleDark').onclick=()=>{ document.body.classList.toggle('dark'); };
 
-// ---------- LOGIN ----------
+// ---------------------- LOGIN ----------------------
 document.getElementById('btnLogin').onclick=()=>{
   const user=prompt("Usuário:");
   const pass=prompt("Senha:");
@@ -226,7 +225,5 @@ document.getElementById('btnLogin').onclick=()=>{
   }else{ alert("Login inválido"); }
 };
 
-// ---------- INICIAR ----------
+// ---------------------- INICIAR ----------------------
 loadEvents();
-
-
